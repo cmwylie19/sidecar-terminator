@@ -1,0 +1,27 @@
+# permissions for end users to edit sidecars.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: sidecar-terminator
+    app.kubernetes.io/managed-by: kustomize
+  name: sidecar-editor-role
+rules:
+- apiGroups:
+  - terminator.defenseunicorns.com
+  resources:
+  - sidecars
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - terminator.defenseunicorns.com
+  resources:
+  - sidecars/status
+  verbs:
+  - get

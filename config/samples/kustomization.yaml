@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- terminator_v1alpha1_sidecar.yaml
+#+kubebuilder:scaffold:manifestskustomizesamples

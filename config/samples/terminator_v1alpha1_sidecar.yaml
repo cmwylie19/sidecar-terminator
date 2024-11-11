@@ -1,0 +1,13 @@
+apiVersion: terminator.defenseunicorns.com/v1alpha1
+kind: Sidecar
+metadata:
+  labels:
+    app.kubernetes.io/name: sidecar-terminator
+    app.kubernetes.io/managed-by: kustomize
+  name: sidecar-sample
+  namespace: default
+spec:
+  DeleteRules:
+  - labels:
+      "*": "*"
+    namespace: "default"
