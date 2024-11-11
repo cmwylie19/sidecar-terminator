@@ -5,6 +5,8 @@ make manifests #when CRD Changes
 make docker-build IMG=controller:dev # build docker image
 make install # install CRD into the cluster 
 make deploy IMG=controller:dev # load the image and deploy into the cluster 
+k label ns sidecar-terminator-system zarf.dev/agent=ignore
+k label ns sidecar-terminator-system istio-injection=enabled
 k apply -f hack/sidecar.yaml
 k config set-context $(k config current-context) --namespace=sidecar-terminator-system
 sleep 5;
@@ -25,6 +27,7 @@ metadata:
   name: pepr-demo
   labels:
     istio-injection: enabled
+    zarf.dev/agent: ignore
 spec: {}
 status: {}
 ---
@@ -327,5 +330,30 @@ spec:
           restartPolicy: Never
   schedule: 0/1 * * * *
 status: {}
+EOF
+
+
+k apply -f -<<EOF
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    control-plane: controller-manager
+    app.kubernetes.io/name: sidecar-terminator
+    app.kubernetes.io/managed-by: kustomize
+  name: controller-manager-metrics-monitor
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - sidecar-terminator-system
+  endpoints:
+    - path: /metrics
+      port: https
+      tlsConfig:
+        insecureSkipVerify: true
+  selector:
+    matchLabels:
+      control-plane: controller-manager
 EOF
 ```
